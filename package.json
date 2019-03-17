@@ -1,0 +1,38 @@
+{
+  "name": "fractal-chat-server",
+  "version": "1.0.0",
+  "description": "Chat server",
+  "scripts": {
+    "start": "ts-node server.ts"
+  },
+  "keywords": [
+    "chat"
+  ],
+  "author": "saikumar",
+  "license": "ISC",
+  "dependencies": {
+    "@tsed/common": "5.0.7",
+    "@tsed/core": "5.0.7",
+    "@tsed/di": "5.0.7",
+    "@tsed/socketio": "5.0.7",
+    "@tsed/swagger": "5.0.7",
+    "@tsed/testing": "5.0.7",
+    "@types/swagger-schema-official": "^2.0.9",
+    "compression": "^1.7.3",
+    "cookie-parser": "^1.4.4",
+    "express": "^4.16.4",
+    "method-override": "^3.0.0",
+    "socket.io": "^2.2.0"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.17.0",
+    "@types/compression": "0.0.36",
+    "@types/cookie-parser": "^1.4.1",
+    "@types/express": "^4.16.1",
+    "@types/method-override": "0.0.31",
+    "@types/socket.io": "^2.1.2",
+    "ts-node": "^8.0.2",
+    "tslint": "^5.12.1",
+    "typescript": "^3.3.3333"
+  }
+}
