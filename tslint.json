@@ -7,7 +7,7 @@
     "quotemark": [true, "single"],
     "object-literal-sort-keys": false,
     "trailing-comma": false,
-    "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore", "require-const-for-all-caps"]
+    "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore", "require-const-for-all-caps"],
   },
   "rulesDirectory": []
 }
