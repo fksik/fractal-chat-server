@@ -1,15 +1,27 @@
 import { Model } from '@tsed/mongoose';
+import { Required, Property } from '@tsed/common';
 
 @Model()
 export class User {
-	constructor(
-		public _id: string,
-		public createdDate: number,
-		public isBot = false,
-		public email?: string,
-		public password?: string,
-		public firstName?: string,
-		public lastName?: string,
-		public picture?: string
-	) {}
+	public _id: string;
+	@Property()
+	@Required()
+	public createdDate: number;
+	@Property()
+	@Required()
+	public isBot = false;
+	@Property()
+	public email?: string;
+	@Property()
+	public password?: string;
+	@Property()
+	public firstName?: string;
+	@Property()
+	public lastName?: string;
+	@Property()
+	public picture?: string;
+	constructor(createdDate: number, isBot: boolean = false) {
+		this.createdDate = createdDate;
+		this.isBot = isBot;
+	}
 }

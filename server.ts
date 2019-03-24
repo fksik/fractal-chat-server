@@ -6,6 +6,7 @@ import {
 import { Env } from '@tsed/core';
 import { json, urlencoded } from 'body-parser';
 import * as compress from 'compression';
+import * as cors from 'cors';
 // import * as cookieParser from 'cookie-parser';
 import { readFileSync } from 'fs';
 import * as methodOverride from 'method-override';
@@ -61,6 +62,7 @@ export class Server extends ServerLoader {
 
 	public $onMountingMiddlewares(): void | Promise<any> {
 		this.use(GlobalAcceptMimesMiddleware)
+			.use(cors())
 			.use(compress({}))
 			.use(methodOverride())
 			.use(json())
