@@ -32,15 +32,10 @@ import { $log as logger, Logger } from 'ts-log-debug';
 		}
 	},
 	env: Env.DEV,
-	httpPort: false,
-	httpsPort: 8000,
+	httpsPort: false,
+	httpPort: 8000,
 	socketIO: {
 		path: '/sock.io'
-	},
-	httpsOptions: {
-		cert: readFileSync('./certs/server.cert'),
-		key: readFileSync('./certs/server.key'),
-		passphrase: '1234'
 	},
 	mount: { '/api/v1': '${rootDir}/controllers/**/*.ts' },
 	rootDir: resolve(__dirname)
