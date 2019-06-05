@@ -1,4 +1,4 @@
-import { Model } from '@tsed/mongoose';
+import { Model, Indexed } from '@tsed/mongoose';
 import { Required, Property } from '@tsed/common';
 
 @Model()
@@ -11,17 +11,20 @@ export class User {
 	@Required()
 	public isBot = false;
 	@Property()
+	@Indexed()
 	public email?: string;
 	@Property()
 	public password?: string;
+	@Property()
+	public salt?: string;
 	@Property()
 	public firstName?: string;
 	@Property()
 	public lastName?: string;
 	@Property()
 	public picture?: string;
-	constructor(createdDate: number, isBot: boolean = false) {
-		this.createdDate = createdDate;
+	constructor(createdDate?: number, isBot: boolean = false) {
+		this.createdDate = createdDate || new Date().getTime();
 		this.isBot = isBot;
 	}
 }

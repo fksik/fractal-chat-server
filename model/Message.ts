@@ -2,7 +2,7 @@ import { Model, Ref } from '@tsed/mongoose';
 
 import { Conversation } from './Conversation';
 import { User } from './User';
-import { Property } from '@tsed/common';
+import { Property, Required } from '@tsed/common';
 
 @Model()
 export class Message {
@@ -18,10 +18,16 @@ export class Message {
 		this.sentOn = sentOn;
 	}
 	public _id: string;
-	@Ref(Conversation) public conversation: Ref<Conversation>;
+	@Required()
+	@Ref(Conversation)
+	public conversation: Ref<Conversation>;
 	@Property()
+	@Required()
 	public content: string;
+	@Required()
 	@Property()
 	public sentOn: number;
-	@Ref(User) public from: Ref<User>;
+	@Required()
+	@Ref(User)
+	public from: Ref<User>;
 }

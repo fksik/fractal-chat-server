@@ -1,0 +1,5 @@
+export enum FractalResponseCodes {
+	USER_NOT_FOUND = 1001,
+	INVALID_PASSWORD = 10002,
+	UNAUTHORIZED = 10003
+}

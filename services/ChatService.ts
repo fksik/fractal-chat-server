@@ -1,12 +1,11 @@
 import { Nsp, Socket, SocketService, Input, Args } from '@tsed/socketio';
 import { Namespace, Socket as SocketIO } from 'socket.io';
-import { $log } from 'ts-log-debug';
-import { User } from '@chat/model/User';
 import { Inject } from '@tsed/di';
 import { MongooseModel } from '@tsed/mongoose';
-import { ChatEvents } from '@chat/constants/chat-events';
-import { Message } from '@chat/model/Message';
-import { Conversation } from '@chat/model/Conversation';
+import { User } from '../model/User';
+import { Conversation } from '../model/Conversation';
+import { Message } from '../model/Message';
+import { ChatEvents } from '../constants/chat-events';
 
 @SocketService('/chat.io')
 export class ChatService {
@@ -19,8 +18,7 @@ export class ChatService {
 		@Inject(Message) private messageModel: MongooseModel<Message>
 	) {}
 
-	public $onConnection(@Socket socket: SocketIO) {
-	}
+	public $onConnection(@Socket socket: SocketIO) {}
 	public $onDisconnect(@Socket socket: SocketIO) {}
 
 	@Input(ChatEvents.RECEIVE_MESSAGE)
@@ -31,7 +29,7 @@ export class ChatService {
 			requestHistory: boolean;
 			conversationId: string;
 		},
-		@Args(1) data: [{ content: string; sentOn: number }],
+		@Args(1) data: { content: string; sentOn: number },
 		@Socket socket: SocketIO
 	) {
 		let user: User | null = null;
@@ -50,14 +48,21 @@ export class ChatService {
 		}
 		if (conversation === null) {
 			conversation = await this.createNewConversation(user);
+			socket.emit(ChatEvents.CONVERSATION_CREATED, conversation);
 		}
-		this.processMessage(data, user, conversation, session.requestHistory);
+		socket.emit(
+			ChatEvents.SEND_MESSAGE,
+			await this.processMessage(
+				data,
+				user,
+				conversation,
+				session.requestHistory
+			)
+		);
 	}
 
 	@Input(ChatEvents.USER_TYPING)
-	public userTyping() {
-		console.log('typing');
-	}
+	public userTyping() {}
 
 	private async createNewAnonymousUser() {
 		const user = new User(new Date().getTime());
@@ -66,15 +71,27 @@ export class ChatService {
 		return model;
 	}
 
-	private processMessage(
-		data: [{ content: string; sentOn: number }],
+	private async processMessage(
+		data: { content: string; sentOn: number },
 		user: User,
 		conversation: Conversation,
 		requestHistory: boolean
 	) {
-		data.forEach(msg => {
-			const message = new Message(conversation, user, msg.content, msg.sentOn);
-		});
+		let messageModels: Message[] = [];
+		if (requestHistory) {
+			messageModels = (await this.fetchHistory(conversation)) || [];
+		}
+		const { content, sentOn } = data;
+		if (content) {
+			const message = new Message(conversation, user, content, sentOn);
+			const model = new this.messageModel(message);
+			messageModels.push(await model.save());
+		}
+		return messageModels;
+	}
+
+	private async fetchHistory(conversation: Conversation) {
+		return this.messageModel.find({ conversation });
 	}
 
 	private async createNewConversation(user: User) {
@@ -83,5 +100,9 @@ export class ChatService {
 		const model = new this.conversationModel(conversation);
 		await model.save();
 		return model;
+	}
+
+	private async joinRoom(socket: SocketIO, conversationId: string) {
+		socket.join(conversationId);
 	}
 }

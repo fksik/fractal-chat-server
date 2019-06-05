@@ -8,10 +8,11 @@ import { json, urlencoded } from 'body-parser';
 import * as compress from 'compression';
 import * as cors from 'cors';
 // import * as cookieParser from 'cookie-parser';
-import { readFileSync } from 'fs';
 import * as methodOverride from 'method-override';
 import { resolve } from 'path';
 import { $log as logger, Logger } from 'ts-log-debug';
+import './middlewares/CustomGolbalErrorHandlerMiddleware';
+import './middlewares/CustomAuthenticatedMiddleware';
 
 @ServerSettings({
 	acceptMimes: ['application/json'],
@@ -37,7 +38,7 @@ import { $log as logger, Logger } from 'ts-log-debug';
 	socketIO: {
 		path: '/sock.io'
 	},
-	mount: { '/api/v1': '${rootDir}/controllers/**/*.ts' },
+	mount: { '/api': '${rootDir}/controllers/**/*.ts' },
 	rootDir: resolve(__dirname)
 })
 export class Server extends ServerLoader {
