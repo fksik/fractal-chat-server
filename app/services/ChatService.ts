@@ -2,9 +2,9 @@ import { Nsp, Socket, SocketService, Input, Args } from '@tsed/socketio';
 import { Namespace, Socket as SocketIO } from 'socket.io';
 import { Inject } from '@tsed/di';
 import { MongooseModel } from '@tsed/mongoose';
-import { User } from '../model/User';
-import { Conversation } from '../model/Conversation';
-import { Message } from '../model/Message';
+import { User } from '../model/database/User';
+import { Conversation } from '../model/database/Conversation';
+import { Message } from '../model/database/Message';
 import { ChatEvents } from '../constants/chat-events';
 
 @SocketService('/chat.io')

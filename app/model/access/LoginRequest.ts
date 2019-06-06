@@ -1,7 +1,7 @@
 import { Required } from '@tsed/common';
 export class LoginRequest {
 	@Required()
-	username: string;
+	public username: string;
 	@Required()
-	password: string;
+	public password: string;
 }

@@ -1,16 +1,16 @@
 import {
-	IMiddleware,
-	EndpointMetadata,
-	EndpointInfo,
-	Next,
 	AuthenticatedMiddleware,
-	OverrideMiddleware,
+	EndpointInfo,
+	EndpointMetadata,
 	HeaderParams,
+	IMiddleware,
+	Next,
+	OverrideMiddleware,
 	Req
 } from '@tsed/common';
-import { Response, Request } from 'express';
-import { AccessService } from '../services/AccessService';
+import { Request } from 'express';
 import { Unauthorized } from '../errors/http/access/Unauthorized';
+import { AccessService } from '../services/access/AccessService';
 
 @OverrideMiddleware(AuthenticatedMiddleware)
 export class CustomAuthenticatedMiddleware implements IMiddleware {

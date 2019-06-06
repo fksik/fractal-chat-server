@@ -1,21 +1,25 @@
-import { Service, Inject } from '@tsed/di';
+import { InvalidPasswordException } from '@chat/errors/http/access/InvalidPasswordException';
+import { UserAlreadyExists } from '@chat/errors/http/access/UserAlreadyExists';
+import { UserNotFoundException } from '@chat/errors/http/access/UserNotFoundException';
+import { JWTToken } from '@chat/model/access/JWTToken';
+import { LoginResponse } from '@chat/model/access/LoginResponse';
+import { NewUser } from '@chat/model/access/NewUser';
+import { Token } from '@chat/model/database/Token';
+import { User } from '@chat/model/database/User';
+import { JWTService } from '@chat/services/access/JWTService';
+import { UUID_V4 } from '@chat/utils/UUID_V4';
+import { Inject, Service } from '@tsed/di';
 import { MongooseModel } from '@tsed/mongoose';
-import { randomBytes, pbkdf2 } from 'crypto';
-import { User } from '../model/User';
-import { SimpleToken } from '../model/SimpleToken';
-import { InvalidPasswordException } from '../errors/http/access/InvalidPasswordException';
-import { UserNotFoundException } from '../errors/http/access/UserNotFoundException';
-import { NewUser } from '../model/access/NewUser';
-import { UserAlreadyExists } from '../errors/http/UserAlreadyExists';
-import { UUID_V4 } from '../utils/UUID_V4';
-import { LoginResponse } from '../model/access/LoginResponse';
+import { pbkdf2, randomBytes } from 'crypto';
+
 const expiryTime: number = 3.6e6;
 
 @Service()
 export class AccessService {
 	constructor(
 		@Inject(User) private userModel: MongooseModel<User>,
-		@Inject(SimpleToken) private simpleTokenModel: MongooseModel<SimpleToken>
+		@Inject(Token) private simpleTokenModel: MongooseModel<Token>,
+		private jwtService: JWTService
 	) {}
 
 	public async gainAccess(userName: string, password: string) {
@@ -25,7 +29,9 @@ export class AccessService {
 		if (user) {
 			if (await this.verifyPassword(user, password)) {
 				const simpleToken = await this.createSimpleAccessTokenForUser(user);
-				return this.buildLoginResponse(user, simpleToken);
+				const login = this.buildLoginResponse(user, simpleToken);
+				const token = await this.jwtService.buildJWTToken(login);
+				return new JWTToken(token);
 			} else {
 				throw new InvalidPasswordException();
 			}
@@ -55,6 +61,17 @@ export class AccessService {
 		}
 	}
 
+	public async getUserUsingToken(token: string) {
+		const tokenDoc = await this.simpleTokenModel.findOne({ token });
+		if (tokenDoc) {
+			const userDoc = await this.userModel.findOne({ user: tokenDoc.user });
+			if (userDoc) {
+				return userDoc;
+			}
+		}
+		return undefined;
+	}
+
 	private generateHash(password: string) {
 		const salt = randomBytes(16).toString('hex');
 		return new Promise<{ hash: string; salt: string }>(resolve => {
@@ -68,7 +85,7 @@ export class AccessService {
 	}
 
 	private async createSimpleAccessTokenForUser(user: User) {
-		const simpleAccessToken = new SimpleToken();
+		const simpleAccessToken = new Token();
 		simpleAccessToken.token = UUID_V4();
 		simpleAccessToken.refreshToken = UUID_V4();
 		simpleAccessToken.user = user;
@@ -76,18 +93,19 @@ export class AccessService {
 		simpleAccessToken.createdAt = now;
 		simpleAccessToken.expiresAt = now + expiryTime;
 		const model = new this.simpleTokenModel(simpleAccessToken);
-		return (await model.save()) as SimpleToken;
+		return (await model.save()) as Token;
 	}
 
-	private buildLoginResponse(user: User, token: SimpleToken) {
-		const result = new LoginResponse();
-		result.email = user.email;
-		result.firstName = user.firstName;
-		result.lastName = user.lastName;
-		result.picture = user.picture;
-		result.token = token.token;
-		result.refreshToken = token.refreshToken;
-		result.expiresAt = token.expiresAt;
+	private buildLoginResponse(user: User, token: Token) {
+		const result: LoginResponse = {
+			email: user.email,
+			firstName: user.firstName,
+			lastName: user.lastName,
+			picture: user.picture,
+			token: token.token,
+			refreshToken: token.refreshToken,
+			expiresAt: token.expiresAt
+		};
 		return result;
 	}
 
@@ -101,16 +119,5 @@ export class AccessService {
 				resolve(derivedKey.toString('hex') === user.password);
 			});
 		});
-	}
-
-	async getUserUsingToken(token: string) {
-		const tokenDoc = await this.simpleTokenModel.findOne({ token });
-		if (tokenDoc) {
-			const userDoc = await this.userModel.findOne({ user: tokenDoc.user });
-			if (userDoc) {
-				return userDoc;
-			}
-		}
-		return undefined;
 	}
 }

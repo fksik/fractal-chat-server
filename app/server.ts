@@ -30,7 +30,7 @@ import './middlewares/CustomGolbalErrorHandlerMiddleware';
 	},
 	env: Env.DEV,
 	httpsPort: false,
-	httpPort: 8000,
+	httpPort: 8001,
 	socketIO: {
 		path: '/sock.io'
 	},

@@ -1,7 +1,7 @@
 import { Exception } from 'ts-httpexceptions';
 
 export class HttpBaseException extends Exception {
-	code: number;
+	public code: number;
 	constructor(
 		status: number,
 		code: number,

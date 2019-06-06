@@ -1,14 +1,18 @@
 {
-  "defaultSeverity": "error",
-  "extends": ["tslint:recommended"],
-  "jsRules": {},
-  "rules": {
-    "one-variable-per-declaration": false,
-    "quotemark": [true, "single"],
-    "object-literal-sort-keys": false,
-    "trailing-comma": false,
+	"defaultSeverity": "error",
+	"extends": ["tslint:recommended"],
+	"jsRules": {},
+	"rules": {
+		"one-variable-per-declaration": false,
+		"quotemark": [true, "single"],
+		"object-literal-sort-keys": false,
+		"trailing-comma": false,
 		"variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore", "require-const-for-all-caps"],
-		"indent": [true, "tabs", 2]
-  },
-  "rulesDirectory": []
+		"indent": [true, "tabs", 2],
+		"ordered-imports": true,
+		"member-access": true,
+		"arrow-parens": [false],
+		"interface-name": [true, "never-prefix"]
+	},
+	"rulesDirectory": []
 }

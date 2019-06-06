@@ -1,4 +1,4 @@
-import { User } from '@chat/model/User';
+import { User } from '@chat/model/database/User';
 
 declare global {
 	namespace Express {

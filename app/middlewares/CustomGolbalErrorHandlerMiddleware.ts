@@ -1,17 +1,21 @@
-import { Request, Response } from 'express';
+import { HttpBaseException } from '@chat/errors/http/HttpBaseException';
 import {
-	OverrideMiddleware,
-	GlobalErrorHandlerMiddleware,
 	Err,
+	GlobalErrorHandlerMiddleware,
+	OverrideMiddleware,
 	Req,
 	Res
 } from '@tsed/common';
+import { Request, Response } from 'express';
 import { Exception } from 'ts-httpexceptions';
-import { HttpBaseException } from '../errors/http/HttpBaseException';
 
 @OverrideMiddleware(GlobalErrorHandlerMiddleware)
 export class CustomGlobalErrorHandlerMiddleware {
-	use(@Err() error: any, @Req() request: Request, @Res() response: Response) {
+	public use(
+		@Err() error: any,
+		@Req() request: Request,
+		@Res() response: Response
+	) {
 		if (error instanceof HttpBaseException) {
 			request.log.error({
 				error: {
