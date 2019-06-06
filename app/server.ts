@@ -1,8 +1,4 @@
-import {
-	GlobalAcceptMimesMiddleware,
-	ServerLoader,
-	ServerSettings
-} from '@tsed/common';
+import { GlobalAcceptMimesMiddleware, ServerLoader, ServerSettings } from '@tsed/common';
 import { Env } from '@tsed/core';
 import { json, urlencoded } from 'body-parser';
 import * as compress from 'compression';
@@ -11,8 +7,8 @@ import * as cors from 'cors';
 import * as methodOverride from 'method-override';
 import { resolve } from 'path';
 import { $log as logger, Logger } from 'ts-log-debug';
-import './middlewares/CustomGolbalErrorHandlerMiddleware';
 import './middlewares/CustomAuthenticatedMiddleware';
+import './middlewares/CustomGolbalErrorHandlerMiddleware';
 
 @ServerSettings({
 	acceptMimes: ['application/json'],
