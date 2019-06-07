@@ -1,4 +1,8 @@
-import { GlobalAcceptMimesMiddleware, ServerLoader, ServerSettings } from '@tsed/common';
+import {
+	GlobalAcceptMimesMiddleware,
+	ServerLoader,
+	ServerSettings
+} from '@tsed/common';
 import { Env } from '@tsed/core';
 import { json, urlencoded } from 'body-parser';
 import * as compress from 'compression';
@@ -30,7 +34,7 @@ import './middlewares/CustomGolbalErrorHandlerMiddleware';
 	},
 	env: Env.DEV,
 	httpsPort: false,
-	httpPort: 8001,
+	httpPort: 8000,
 	socketIO: {
 		path: '/sock.io'
 	},

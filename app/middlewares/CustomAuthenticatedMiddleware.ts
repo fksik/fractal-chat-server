@@ -18,15 +18,18 @@ export class CustomAuthenticatedMiddleware implements IMiddleware {
 
 	public async use(
 		@EndpointInfo() endpoint: EndpointMetadata,
-		@HeaderParams('authorization') token: string,
+		@HeaderParams('authorization') bearerToken: string,
 		@Req() request: Request,
 		@Next() next: Express.NextFunction
 	) {
-		if (token.startsWith('Bearer')) {
-			token = token.slice(7, token.length);
-			const options = endpoint.get(AuthenticatedMiddleware) || {};
-			request.user = await this.accessService.getUserUsingToken(token);
-			if (request.user) {
+		if (bearerToken.startsWith('Bearer')) {
+			const jwtToken = bearerToken.slice(7, bearerToken.length);
+			const accessToken = await this.accessService.verifyAndGetAccessTokenFromJWT(
+				jwtToken
+			);
+			const user = await this.accessService.getUserUsingToken(accessToken);
+			if (user) {
+				request.user = user;
 				next();
 				return;
 			}

@@ -11,6 +11,7 @@ import { UUID_V4 } from '@chat/utils/UUID_V4';
 import { Inject, Service } from '@tsed/di';
 import { MongooseModel } from '@tsed/mongoose';
 import { pbkdf2, randomBytes } from 'crypto';
+import { $log } from '@tsed/common';
 
 const expiryTime: number = 3.6e6;
 
@@ -18,7 +19,7 @@ const expiryTime: number = 3.6e6;
 export class AccessService {
 	constructor(
 		@Inject(User) private userModel: MongooseModel<User>,
-		@Inject(Token) private simpleTokenModel: MongooseModel<Token>,
+		@Inject(Token) private tokenModel: MongooseModel<Token>,
 		private jwtService: JWTService
 	) {}
 
@@ -62,14 +63,21 @@ export class AccessService {
 	}
 
 	public async getUserUsingToken(token: string) {
-		const tokenDoc = await this.simpleTokenModel.findOne({ token });
+		const tokenDoc = await this.tokenModel.findOne({ token });
 		if (tokenDoc) {
-			const userDoc = await this.userModel.findOne({ user: tokenDoc.user });
+			const userDoc = await this.userModel.findById(tokenDoc.user);
 			if (userDoc) {
 				return userDoc;
 			}
 		}
 		return undefined;
+	}
+
+	public async verifyAndGetAccessTokenFromJWT(
+		jwtToken: string
+	): Promise<string> {
+		const user = await this.jwtService.verifyAndGetJWTPayload(jwtToken);
+		return user.token;
 	}
 
 	private generateHash(password: string) {
@@ -92,7 +100,7 @@ export class AccessService {
 		const now = Date.now();
 		simpleAccessToken.createdAt = now;
 		simpleAccessToken.expiresAt = now + expiryTime;
-		const model = new this.simpleTokenModel(simpleAccessToken);
+		const model = new this.tokenModel(simpleAccessToken);
 		return (await model.save()) as Token;
 	}
 
