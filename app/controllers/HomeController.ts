@@ -1,6 +1,5 @@
-import { Controller, Get, Res, Authenticated } from '@tsed/common';
+import { Authenticated, Controller, Get, Res } from '@tsed/common';
 import { Response } from 'express';
-import { $log as logger } from 'ts-log-debug';
 
 @Controller('/')
 export class HomeController {

@@ -1,16 +1,14 @@
-import { Nsp, Socket, SocketService, Input, Args } from '@tsed/socketio';
-import { Namespace, Socket as SocketIO } from 'socket.io';
 import { Inject } from '@tsed/di';
 import { MongooseModel } from '@tsed/mongoose';
-import { User } from '../model/database/User';
+import { Args, Input, Socket, SocketService } from '@tsed/socketio';
+import { Socket as SocketIO } from 'socket.io';
+import { ChatEvents } from '../constants/chat-events';
 import { Conversation } from '../model/database/Conversation';
 import { Message } from '../model/database/Message';
-import { ChatEvents } from '../constants/chat-events';
+import { User } from '../model/database/User';
 
 @SocketService('/chat.io')
 export class ChatService {
-	@Nsp private nsp: Namespace;
-
 	constructor(
 		@Inject(User) private userModel: MongooseModel<User>,
 		@Inject(Conversation)

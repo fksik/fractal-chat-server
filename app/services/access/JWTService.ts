@@ -11,8 +11,8 @@ export class JWTService {
 		return new Promise<string>(resolve => {
 			sign(
 				loginResponse,
-				'123',
-				{ algorithm: 'HS256', issuer: 'FRACTAL' },
+				'123',	// TODO move to .env
+				{ algorithm: 'HS256', issuer: 'FRACTAL' },	// TODO move to .env
 				(err, token) => {
 					if (err) {
 						throw new JWTGenerationException(err);
@@ -28,10 +28,10 @@ export class JWTService {
 		return new Promise<LoginResponse>(resolve => {
 			verify(
 				jwtToken,
-				'123',
+				'123',	// TODO move to .env
 				{
-					algorithms: ['HS256'],
-					issuer: 'FRACTAL',
+					algorithms: ['HS256'],	// TODO move to .env
+					issuer: 'FRACTAL',	// TODO move to .env
 					maxAge: JWT_MAX_AGE
 				},
 				(err, decoded) => {

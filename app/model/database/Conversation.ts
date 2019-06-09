@@ -1,31 +1,12 @@
-import { Model, Ref, Schema } from '@tsed/mongoose';
-
-import { Account } from './Account';
-import { User } from './User';
-import { PropertyType, Property } from '@tsed/common';
-
-@Schema()
-export class Participant {
-	constructor(user: User, addedBy: User) {
-		this.addedAt = new Date().getTime();
-		this.user = user;
-		this.addedBy = user;
-	}
-	@Ref(User)
-	public user: Ref<User>;
-	@Property()
-	public addedAt: number;
-	@Ref(User)
-	public addedBy: Ref<User>;
-}
+import { Participant } from '@db-models/Participant';
+import { User } from '@db-models/User';
+import { Property, PropertyType } from '@tsed/common';
+import { Model, Ref } from '@tsed/mongoose';
 
 @Model()
 export class Conversation {
 	public _id: string;
-	public constructor(isPrivate = true, url?: string) {
-		this.isPrivate = isPrivate;
-		this.url = url;
-	}
+	@Property()
 	public createdAt: number;
 	@Property()
 	public isPrivate: boolean;
@@ -35,7 +16,11 @@ export class Conversation {
 	public createdBy: Ref<User>;
 	@PropertyType(Participant)
 	public participants: Participant[];
-	@Ref(Account) public account: Ref<Account>;
+
+	public constructor(isPrivate = true, url?: string) {
+		this.isPrivate = isPrivate;
+		this.url = url;
+	}
 
 	public addParticipant(user: User, addedBy: User) {
 		const participant = new Participant(user, addedBy);

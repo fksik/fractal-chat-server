@@ -11,7 +11,6 @@ import { UUID_V4 } from '@chat/utils/UUID_V4';
 import { Inject, Service } from '@tsed/di';
 import { MongooseModel } from '@tsed/mongoose';
 import { pbkdf2, randomBytes } from 'crypto';
-import { $log } from '@tsed/common';
 
 const expiryTime: number = 3.6e6;
 
