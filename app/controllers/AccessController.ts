@@ -1,5 +1,6 @@
 import { LoginRequest } from '@chat/model/access/LoginRequest';
 import { NewUser } from '@chat/model/access/NewUser';
+import { RequestRefreshToken } from '@chat/model/access/RequestRefreshToken';
 import { AccessService } from '@chat/services/access/AccessService';
 import { BodyParams, Controller, Post } from '@tsed/common';
 
@@ -18,4 +19,7 @@ export class AccessController {
 		await this.accessService.checkIfUserAlreadyExists(data);
 		return await this.accessService.createNewUser(data.username, data.password);
 	}
+
+	@Post('refreshToken')
+	public async refreshToken(@BodyParams() data: RequestRefreshToken) {}
 }
